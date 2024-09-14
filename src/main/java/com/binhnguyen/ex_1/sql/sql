@@ -1,0 +1,52 @@
+
+
+DROP TABLE IF EXISTS building, bType, building_bType; 
+
+CREATE TABLE building ( 
+	id BIGINT PRIMARY KEY NOT NULL, 
+    name VARCHAR(45) NOT NU
+    street VARCHAR(45) NOT NULL,
+    district VARCHAR(45) NOT NULL, 
+    ward VARCHAR(45) NOT NULL, 
+    floorarea INT NOT NULL 
+); 
+
+CREATE TABLE bType ( 
+	id INT PRIMARY KEY NOT NULL, 
+    type VARCHAR(45) NOT NULL 
+); 
+
+CREATE TABLE building_bType( 
+	building_id BIGINT NOT NULL, 
+    bType_id INT NOT NULL, 
+    PRIMARY KEY (building_id, bType_id), 
+    FOREIGN KEY (building_id) REFERENCES building(id), 
+    FOREIGN KEY (bType_id) REFERENCES bType(id) 
+); 
+
+INSERT INTO bType(id, type) 
+VALUES 
+(1, 'tang_tret'), 
+(2, 'nguyen_can'), 
+(3, 'noi_that'); 
+
+INSERT INTO building(id, name, street, district, ward, floorarea) 
+VALUES 
+(1, 'Building a', 'street a', 'district a', 'ward a', 50), 
+(2, 'Building b', 'street b', 'district b', 'ward b', 100), 
+(3, 'Building c', 'street c', 'district c', 'ward c', 150), 
+(4, 'Building d', 'street d', 'district d', 'ward d', 200), 
+(5, 'Building e', 'street e', 'district e', 'ward e', 250), 
+(6, 'Building f', 'street f', 'district f', 'ward f', 300), 
+(7, 'Building j', 'street j', 'district j', 'ward j', 350); 
+
+INSERT INTO building_bType(building_id, bType_id) 
+VALUES 
+(1,1), 
+(2,1),(2,2), 
+(3,1),(3,2),(3,3), 
+(4,1), 
+(5,1),(5,2), 
+(6,1),(6,2),(6,3), 
+(7,1); 
+
