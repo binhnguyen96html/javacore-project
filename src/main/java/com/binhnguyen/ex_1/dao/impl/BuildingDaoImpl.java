@@ -9,17 +9,17 @@ import java.util.List;
 
 import com.binhnguyen.ex_1.constant.SystemConstant;
 import com.binhnguyen.ex_1.dao.BuildingDao;
-import com.binhnguyen.ex_1.dao.buildingModel.BuildingDaoModel;
+import com.binhnguyen.ex_1.dao.buildingModule.BuildingDaoModule;
 import com.binhnguyen.ex_1.utils.ConnectionUtils;
 import com.mysql.cj.util.StringUtils;
 
 public class BuildingDaoImpl implements BuildingDao {
 
 	@Override
-	public List<BuildingDaoModel> findBuilding(String name, String street, String district, String ward,
+	public List<BuildingDaoModule> findBuilding(String name, String street, String district, String ward,
 			Integer floorarea, String type) {
 		
-		List<BuildingDaoModel> buildings = new ArrayList<>();
+		List<BuildingDaoModule> buildings = new ArrayList<>();
 
 		Connection conn = null;
 		Statement stmt = null;
@@ -63,7 +63,7 @@ public class BuildingDaoImpl implements BuildingDao {
 			 rs = stmt.executeQuery(query.toString());
 			 
 			 while(rs.next()) {
-				 BuildingDaoModel buildingDaoModule = new BuildingDaoModel();
+				 BuildingDaoModule buildingDaoModule = new BuildingDaoModule();
 				 
 				 buildingDaoModule.setName(rs.getString("name"));
 				 buildingDaoModule.setStreet(rs.getString("street"));

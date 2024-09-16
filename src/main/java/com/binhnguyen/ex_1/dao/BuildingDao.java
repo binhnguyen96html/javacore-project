@@ -2,11 +2,11 @@ package com.binhnguyen.ex_1.dao;
 
 import java.util.List;
 
-import com.binhnguyen.ex_1.dao.buildingModel.BuildingDaoModel;
+import com.binhnguyen.ex_1.dao.buildingModule.BuildingDaoModule;
 
 public interface BuildingDao {
 	
-	List<BuildingDaoModel> findBuilding(
+	List<BuildingDaoModule> findBuilding(
 			String name,
 			String street,
 			String district,
