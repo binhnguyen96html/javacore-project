@@ -34,8 +34,4 @@ public class BuildQueryUsing {
 			return "";
 	}
 
-	public static String buildQueryWithJoin(String string, String string2, String string3, String string4) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
