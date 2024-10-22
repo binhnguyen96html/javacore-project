@@ -1,12 +1,13 @@
 package repository;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface JdbcRepository<T> {
 
 	List<T> findByCondition(String sql);
 	
-	void insert(Object object);
+	void insert(Object object, Connection conn);
 	
-	void delete(Long id, String field, Long id2, String field2);
+	void delete(Long id, String field, Long id2, String field2, Connection conn);
 }

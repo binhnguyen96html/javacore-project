@@ -45,8 +45,10 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 			results = resultSetMapper.mapRow(rs, tClass);
 
 		} catch (SQLException e) {
+			System.out.println("SQLException-findByCondition: " + e);
 			e.printStackTrace();
 		}catch(Exception e) {
+			System.out.println("Exception-findByCondition: " + e);
 			e.printStackTrace();
 		}finally {
 			try {
@@ -62,14 +64,15 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 	}//findByCondition
 
 	@Override
-	public void insert(Object object) {
-		Connection conn = null;
+	public void insert(Object object, Connection conn) {
+		//Connection conn = null;
 		PreparedStatement stmt = null;
 		
 		try {
-			conn = ConnectionUtils.getConnection();
+			//conn = ConnectionUtils.getConnection();
 			StringBuilder sql = createSQLInsert();
 			stmt = conn.prepareStatement(sql.toString());
+			
 			Class<?> zClass = object.getClass();
 			Field[] fields = zClass.getDeclaredFields();
 			int parameterIndex = 1;
@@ -92,7 +95,15 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 			//System.out.println("insert, sql: "+sql);
 			stmt.executeUpdate();
 		} catch (SQLException | IllegalAccessException e) {
+			System.out.println("insert: " + e);
 			e.printStackTrace();
+		}finally {
+			try {
+				//if(conn!=null) conn.close();
+				if(stmt!=null) stmt.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		}
 		
 	}
@@ -139,14 +150,14 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 	}// createSQLInsert
 
 	@Override
-	public void delete(Long id, String field, Long id2, String field2) {
+	public void delete(Long id, String field, Long id2, String field2, Connection conn) {
 		
-		Connection conn = null;
+		//Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		
 		try {
-			conn = ConnectionUtils.getConnection();
+			//conn = ConnectionUtils.getConnection();
 			stmt = conn.createStatement();
 			String tableName = null;
 			if (tClass.isAnnotationPresent(Entity.class) && tClass.isAnnotationPresent(Table.class)) {
@@ -154,14 +165,14 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 				tableName = table.name();
 			}
 			String sql = "DELETE from "+tableName+" WHERE "+field+"="+id+" AND "+field2+"="+id2;
-			System.out.println("delete, sql: " + sql);
+			//System.out.println("delete, sql: " + sql);
 			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			try {
 				if (conn != null)
-					conn.close();
+					//conn.close();
 				if (stmt != null)
 					stmt.close();
 				if (rs != null)

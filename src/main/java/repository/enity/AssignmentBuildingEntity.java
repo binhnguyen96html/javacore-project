@@ -29,4 +29,13 @@ public class AssignmentBuildingEntity extends BaseEntity {
 	public void setBuildingId(Long buildingId) {
 		this.buildingId = buildingId;
 	}
+
+	@Override
+	public String toString() {
+		return "AssignmentBuildingEntity [staffId=" + staffId + ", buildingId=" + buildingId + ", getStaffId()="
+				+ getStaffId() + ", getBuildingId()=" + getBuildingId() + ", getId()=" + getId() + ", getClass()="
+				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+	}
+	
+	
 }

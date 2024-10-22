@@ -2,9 +2,9 @@ package utils;
 
 import com.mysql.cj.util.StringUtils;
 
-public class BuildQueryUsing {
+public class QueryBuilderUtils {
 
-	public static <T> String withoutJoin(String table, String field, T input) {
+	public static <T> String buildQueryUsingLike(String table, String field, T input) {
 		if( (input instanceof String && !StringUtils.isNullOrEmpty((String) input))
 				|| (input instanceof Integer && input != null) ) {
 			
@@ -17,7 +17,7 @@ public class BuildQueryUsing {
 		return "";
 	}
 	
-	public static <T> String join(
+	public static <T> String buildingQueryWithJoin(
 			String table1, 
 			String field1, 
 			String table2, 

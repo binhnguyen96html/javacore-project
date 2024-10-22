@@ -2,8 +2,10 @@ package view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import controller.BuildingController;
@@ -15,28 +17,25 @@ public class BuildingView {
 		BuildingController buildingController = new BuildingController();
 
 		// Input
-		BuildingSearchRequest bsr = new BuildingSearchRequest();
-		bsr.setName(null);
-		bsr.setFloorArea(null);
-		bsr.setDistrictCode(null);
-		bsr.setWard(null);
-		bsr.setStreet(null);
-		bsr.setNumberOfBasement(null);
-		bsr.setDirection(null);
-		bsr.setLevel(null);
-		bsr.setAreaRentFrom(null);
-		bsr.setAreaRentTo(null);
-		bsr.setCostRentFrom(null);
-		bsr.setCostRentTo(null);
-		bsr.setManagerName(null);
-		bsr.setManagerPhoneNumber(null);
-		bsr.setAssignedStaffId(null);
+		Map<String, String> params = new HashMap<>();
+		params.put("name", null);
+		params.put("floorarea", null);
+		params.put("districtcode",null);
+		params.put("ward",null);
+		params.put("street",null);
+		params.put("numberofbasement",null);
+		params.put("direction",null);
+		params.put("level",null);
+		params.put("arearentfrom",null);
+		params.put("arearentto",null);
+		params.put("costrentfrom",null);
+		params.put("costrentto",null);
+		params.put("managername",null);
+		params.put("managerphonenumber",null);
+		params.put("assignedstaffid",null);
+		params.put("buildingtypes",null);
 		
-		List<String> buildingTypes = new ArrayList<>();
-		buildingTypes.add("tang-tret");
-		buildingTypes.add("nguyen-can");
-		buildingTypes.add("noi-that");
-		bsr.setBuildingtypes(buildingTypes);
+		BuildingSearchRequest bsr = BuildingSearchRequest.convertParamsToBSR(params);
 		
 		System.out.println("find building --------------------");
 		List<BuildingResponse> results = buildingController.findBuilding(bsr);
@@ -54,8 +53,8 @@ public class BuildingView {
 		}
 
 		System.out.println("assign building for staffs--------------------");
-		List<Long> staffIdsList = Arrays.asList(2L, 3L);
+		List<Long> staffIdsList = Arrays.asList(2L,3L,4L);
 		Set<Long> staffIds = new HashSet<>(staffIdsList);
-		buildingController.assignBuilding(2L, staffIds);
+		buildingController.assignBuilding(4L, staffIds);
 	}
 }
