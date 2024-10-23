@@ -50,6 +50,7 @@ public class BuildingView {
 			System.out.println("Building floorarea: " + item.getFloorArea());
 			System.out.println("Building rentPrice: " + item.getRentPrice());
 			System.out.println("Building serviceFee: " + item.getServiceFee());
+			System.out.println("Building rentAreas: " + item.getRentalArea());
 			System.out.println("Building rentTypes: " + item.getRentTypes());
 		}
 

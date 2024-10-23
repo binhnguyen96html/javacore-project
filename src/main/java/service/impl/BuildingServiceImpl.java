@@ -11,15 +11,18 @@ import model.response.BuildingResponse;
 import repository.AssignmentBuildingRepository;
 import repository.BuildingRepository;
 import repository.DistrictRepository;
+import repository.RentAreaRepository;
 import repository.RentTypeRepository;
 import repository.UserRepository;
 import repository.enity.AssignmentBuildingEntity;
 import repository.enity.BuildingEntity;
+import repository.enity.RentAreaEntity;
 import repository.enity.RentTypeEntity;
 import repository.enity.UserEntity;
 import repository.impl.AssignmentBuildingRepositoryImpl;
 import repository.impl.BuildingRepositoryImpl;
 import repository.impl.DistrictRepositoryImpl;
+import repository.impl.RentAreaRepositoryImpl;
 import repository.impl.RentTypeRepositoryImpl;
 import repository.impl.UserRepositoryImpl;
 import service.BuildingService;
@@ -30,7 +33,7 @@ public class BuildingServiceImpl implements BuildingService {
 	private DistrictRepository districtRepository = (DistrictRepository) new DistrictRepositoryImpl();
 	private UserRepository userRepository = new UserRepositoryImpl();
 	private RentTypeRepository rentTypeRepository = new RentTypeRepositoryImpl();
-	
+	private RentAreaRepository rentAreaRepository = new RentAreaRepositoryImpl();
 	
 	private AssignmentBuildingRepository assingmentBuildingRepository = new AssignmentBuildingRepositoryImpl();
 
@@ -59,6 +62,17 @@ public class BuildingServiceImpl implements BuildingService {
 			buildingResponse.setFloorArea(item.getFloorArea());
 			buildingResponse.setRentPrice(item.getRentPrice());
 			buildingResponse.setServiceFee(item.getServiceFee());
+			
+			//Rent Area
+			List<RentAreaEntity> rentAreas = rentAreaRepository.getListRentAreas(item.getId());
+			String areas = "";
+			for(RentAreaEntity area: rentAreas) {
+				areas += area.getValue();
+				if(rentAreas.indexOf(area) != rentAreas.size()-1) {
+					areas += ", ";
+				}
+			}
+			buildingResponse.setRentalArea(areas);
 			
 			//Rent Type
 			List<RentTypeEntity> rentTypes = rentTypeRepository.getListOfRentTypes(item.getId());
