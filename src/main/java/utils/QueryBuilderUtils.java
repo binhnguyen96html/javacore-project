@@ -4,13 +4,22 @@ import com.mysql.cj.util.StringUtils;
 
 public class QueryBuilderUtils {
 
-	public static <T> String buildQueryUsingLike(String table, String field, T input) {
-		if( (input instanceof String && !StringUtils.isNullOrEmpty((String) input))
-				|| (input instanceof Integer && input != null) ) {
-			
+	public static String buildQueryUsingLike(String table, String field, String input) {
+		if(!StringUtils.isNullOrEmpty(input)) {
 			if(!StringUtils.isNullOrEmpty(table)
 					&& !StringUtils.isNullOrEmpty(field)) {
 				return " AND "+table+"."+field+" LIKE '%"+input+"%' ";
+			}
+		}
+		
+		return "";
+	}
+	
+	public static <T> String buildQueryUsingEqualOperator(String table, String field, T input) {
+		if(input != null){
+			if(!StringUtils.isNullOrEmpty(table)
+					&& !StringUtils.isNullOrEmpty(field)) {
+				return " AND "+table+"."+field+"="+input+" ";
 			}
 		}
 		

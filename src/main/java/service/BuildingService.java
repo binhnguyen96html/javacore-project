@@ -10,5 +10,5 @@ public interface BuildingService {
 
 	List<BuildingResponse> findBuilding(BuildingSearchRequest buildingSearchRequest);
 	
-	void assignBuilding(Long buildingId, Set<Long> staffIds);
+	void assignBuilding(Long buildingId,  Set<Long> staffIds);
 }

@@ -1,6 +1,5 @@
 package view;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +10,7 @@ import java.util.Set;
 import controller.BuildingController;
 import model.request.BuildingSearchRequest;
 import model.response.BuildingResponse;
+import utils.ConverterUtils;
 
 public class BuildingView {
 	public static void main(String[] args) {
@@ -35,7 +35,7 @@ public class BuildingView {
 		params.put("assignedstaffid",null);
 		params.put("buildingtypes",null);
 		
-		BuildingSearchRequest bsr = BuildingSearchRequest.convertParamsToBSR(params);
+		BuildingSearchRequest bsr = ConverterUtils.convertParamsToBuildingSearchRequest(params);
 		
 		System.out.println("find building --------------------");
 		List<BuildingResponse> results = buildingController.findBuilding(bsr);
@@ -50,10 +50,11 @@ public class BuildingView {
 			System.out.println("Building floorarea: " + item.getFloorArea());
 			System.out.println("Building rentPrice: " + item.getRentPrice());
 			System.out.println("Building serviceFee: " + item.getServiceFee());
+			System.out.println("Building rentTypes: " + item.getRentTypes());
 		}
 
 		System.out.println("assign building for staffs--------------------");
-		List<Long> staffIdsList = Arrays.asList(2L,3L,4L);
+		List<Long> staffIdsList = Arrays.asList(2L);
 		Set<Long> staffIds = new HashSet<>(staffIdsList);
 		buildingController.assignBuilding(4L, staffIds);
 	}

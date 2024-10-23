@@ -1,9 +1,10 @@
 package repository;
 
-import java.util.Set;
+import java.util.List;
 
 import repository.enity.AssignmentBuildingEntity;
 
 public interface AssignmentBuildingRepository extends JdbcRepository<AssignmentBuildingEntity> {
-	void assignBuilding(Long buildingId, Set<Long> staffIds);
+	List<AssignmentBuildingEntity> getAssignmentBuildingListById(Long buildingId);
+	void assignBuilding(Long buildingId, List<Long> staffIdsToDelete,  List<AssignmentBuildingEntity> staffsToInsert);
 }

@@ -33,7 +33,7 @@ public class BuildingRepositoryImpl extends SimpleJdbcRepository<BuildingEntity>
 		// NAME
 		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "name", buildingSearchRequest.getName() ));
 		// FLOORAREA
-		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "floorarea", buildingSearchRequest.getFloorArea()));
+		query.append(QueryBuilderUtils.buildQueryUsingEqualOperator("building", "floorarea", buildingSearchRequest.getFloorArea()));
 		// DISTRICT
 		query.append(QueryBuilderUtils.buildQueryUsingLike("district", "code", buildingSearchRequest.getDistrictCode()));
 		// WARD
@@ -41,7 +41,7 @@ public class BuildingRepositoryImpl extends SimpleJdbcRepository<BuildingEntity>
 		// STREET
 		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "street", buildingSearchRequest.getStreet()));
 		// NUMBER OF BASEMENT
-		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "numberOfBasement", buildingSearchRequest.getNumberOfBasement()));
+		query.append(QueryBuilderUtils.buildQueryUsingEqualOperator("building", "numberOfBasement", buildingSearchRequest.getNumberOfBasement()));
 		// DIRECTION
 		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "direction", buildingSearchRequest.getDirection()));
 		// LEVEL

@@ -7,5 +7,4 @@ import repository.enity.BuildingEntity;
 
 public interface BuildingRepository extends JdbcRepository<BuildingEntity> {
 	List<BuildingEntity> findBuilding(BuildingSearchRequest buildingSearchRequest);
-	
 }
