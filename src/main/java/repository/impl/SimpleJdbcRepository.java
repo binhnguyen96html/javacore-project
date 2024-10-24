@@ -69,19 +69,19 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 	@Override
 	public void insert(Object object, Connection conn) {
 		// Connection conn = null;
-		PreparedStatement stmt = null;
+		PreparedStatement pstmt = null;
 
 		try {
 			// conn = ConnectionUtils.getConnection();
 			StringBuilder sql = createSQLInsert();
-			stmt = conn.prepareStatement(sql.toString());
+			pstmt = conn.prepareStatement(sql.toString());
 
 			Class<?> zClass = object.getClass();
 			Field[] fields = zClass.getDeclaredFields();
 			int parameterIndex = 1;
 			for (Field field : fields) {
 				field.setAccessible(true);
-				stmt.setObject(parameterIndex, field.get(object));
+				pstmt.setObject(parameterIndex, field.get(object));
 				parameterIndex++;
 			}
 			Class<?> parentClass = zClass.getSuperclass();
@@ -90,21 +90,21 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 			while (parentClass != null) {
 				for (Field field : parentClass.getDeclaredFields()) {
 					field.setAccessible(true);
-					stmt.setObject(indexParent, field.get(object));
+					pstmt.setObject(indexParent, field.get(object));
 					indexParent++;
 				}
 				parentClass = parentClass.getSuperclass();
 			}
 			System.out.println("insert, sql: " + sql);
-			stmt.executeUpdate();
+			pstmt.executeUpdate();
 		} catch (SQLException | IllegalAccessException e) {
 			System.out.println("insert: " + e);
 			e.printStackTrace();
 		} finally {
 			try {
 				// if(conn!=null) conn.close();
-				if (stmt != null)
-					stmt.close();
+				if (pstmt != null)
+					pstmt.close();
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
@@ -116,10 +116,11 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 		PreparedStatement stmt = null;
 
 		try {
+			//stmt = null;
+			StringBuilder sql = createSQLInsert();
+			stmt = conn.prepareStatement(sql.toString());
+			
 			for (T object : objects) {
-				stmt = null;
-				StringBuilder sql = createSQLInsert();
-				stmt = conn.prepareStatement(sql.toString());
 
 				Class<?> zClass = object.getClass();
 				Field[] fields = zClass.getDeclaredFields();
@@ -127,6 +128,7 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 				for (Field field : fields) {
 					field.setAccessible(true);
 					stmt.setObject(parameterIndex, field.get(object));
+					System.out.println("field.get(object): "+ field.get(object));
 					parameterIndex++;
 				}
 				Class<?> parentClass = zClass.getSuperclass();
@@ -140,9 +142,11 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 						indexParent++;
 					}
 					parentClass = parentClass.getSuperclass();
-				}				
-				stmt.executeUpdate();
+				}	
+				//addBatch(): thêm một nhóm lệnh sql vào batch thực hiện
+				stmt.addBatch();
 			}
+			 stmt.executeBatch();
 		} catch (SQLException | IllegalAccessException e) {
 			System.out.println("insert: " + e);
 			e.printStackTrace();
@@ -194,7 +198,7 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 
 		StringBuilder sql = new StringBuilder(
 				"insert into " + tableName + "(" + fields.toString() + ") values(" + values + ")");
-		//System.out.println("createSQLInsert(), sql: " + sql);
+		System.out.println("createSQLInsert(), sql: " + sql);
 		return sql;
 	}// createSQLInsert
 
@@ -236,11 +240,10 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 	@Override
 	public void deleteMany(Long id, String field, List<Long> ids, String field2, Connection conn) {
 
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
-			stmt = conn.createStatement();
 			String tableName = null;
 			if (tClass.isAnnotationPresent(Entity.class) && tClass.isAnnotationPresent(Table.class)) {
 				Table table = tClass.getAnnotation(Table.class);
@@ -257,7 +260,9 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 			sql.append(")");
 
 			//System.out.println("delete, sql: " + sql);
-			stmt.executeUpdate(sql.toString());
+			
+			pstmt = conn.prepareStatement(sql.toString());
+			pstmt.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -265,8 +270,8 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 			try {
 				if (conn != null)
 					// conn.close();
-					if (stmt != null)
-						stmt.close();
+					if (pstmt != null)
+						pstmt.close();
 				if (rs != null)
 					rs.close();
 			} catch (Exception e) {

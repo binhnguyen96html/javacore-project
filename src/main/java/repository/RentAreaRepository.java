@@ -2,8 +2,8 @@ package repository;
 
 import java.util.List;
 
-import repository.enity.RentAreaEntity;
+import repository.entity.RentAreaEntity;
 
 public interface RentAreaRepository extends JdbcRepository<RentAreaEntity> {
-	List<RentAreaEntity> getListRentAreas(Long buildingId);
+	List<String> getListRentAreas(Long buildingId);
 }

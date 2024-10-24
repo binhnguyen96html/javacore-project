@@ -55,7 +55,7 @@ public class BuildingView {
 		}
 
 		System.out.println("assign building for staffs--------------------");
-		List<Long> staffIdsList = Arrays.asList(2L);
+		List<Long> staffIdsList = Arrays.asList(2L,4L,3L);
 		Set<Long> staffIds = new HashSet<>(staffIdsList);
 		buildingController.assignBuilding(4L, staffIds);
 	}

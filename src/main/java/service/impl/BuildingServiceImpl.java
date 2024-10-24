@@ -7,6 +7,7 @@ import java.util.Set;
 
 import enums.DistrictsEnum;
 import model.request.BuildingSearchRequest;
+import model.request.BuildingSearchRequestRepository;
 import model.response.BuildingResponse;
 import repository.AssignmentBuildingRepository;
 import repository.BuildingRepository;
@@ -14,11 +15,11 @@ import repository.DistrictRepository;
 import repository.RentAreaRepository;
 import repository.RentTypeRepository;
 import repository.UserRepository;
-import repository.enity.AssignmentBuildingEntity;
-import repository.enity.BuildingEntity;
-import repository.enity.RentAreaEntity;
-import repository.enity.RentTypeEntity;
-import repository.enity.UserEntity;
+import repository.entity.AssignmentBuildingEntity;
+import repository.entity.BuildingEntity;
+import repository.entity.RentAreaEntity;
+import repository.entity.RentTypeEntity;
+import repository.entity.UserEntity;
 import repository.impl.AssignmentBuildingRepositoryImpl;
 import repository.impl.BuildingRepositoryImpl;
 import repository.impl.DistrictRepositoryImpl;
@@ -26,6 +27,7 @@ import repository.impl.RentAreaRepositoryImpl;
 import repository.impl.RentTypeRepositoryImpl;
 import repository.impl.UserRepositoryImpl;
 import service.BuildingService;
+import utils.ConverterUtils;
 
 public class BuildingServiceImpl implements BuildingService {
 
@@ -42,8 +44,9 @@ public class BuildingServiceImpl implements BuildingService {
 	public List<BuildingResponse> findBuilding(BuildingSearchRequest buildingSearchRequest) {
 
 		List<BuildingResponse> results = new ArrayList<>();
-		List<BuildingEntity> buildingEntities = buildingRepository.findBuilding(buildingSearchRequest);
 		
+		BuildingSearchRequestRepository bsrr = ConverterUtils.covertBsrToBsrr(buildingSearchRequest);
+		List<BuildingEntity> buildingEntities = buildingRepository.findBuilding(bsrr);
 		
 		for(BuildingEntity item: buildingEntities) {
 			BuildingResponse buildingResponse = new BuildingResponse();
@@ -64,25 +67,13 @@ public class BuildingServiceImpl implements BuildingService {
 			buildingResponse.setServiceFee(item.getServiceFee());
 			
 			//Rent Area
-			List<RentAreaEntity> rentAreas = rentAreaRepository.getListRentAreas(item.getId());
-			String areas = "";
-			for(RentAreaEntity area: rentAreas) {
-				areas += area.getValue();
-				if(rentAreas.indexOf(area) != rentAreas.size()-1) {
-					areas += ", ";
-				}
-			}
+			List<String> rentAreas = rentAreaRepository.getListRentAreas(item.getId());
+			String areas = String.join(", ", rentAreas);
 			buildingResponse.setRentalArea(areas);
 			
 			//Rent Type
-			List<RentTypeEntity> rentTypes = rentTypeRepository.getListOfRentTypes(item.getId());
-			String types = "";
-			for(RentTypeEntity typeName: rentTypes) {
-				types += typeName.getName();
-				if(rentTypes.indexOf(typeName) != rentTypes.size()-1) {
-					types += ", ";
-				}
-			}
+			List<String> rentTypes = rentTypeRepository.getListOfRentTypes(item.getId());
+			String types = String.join(", ", rentTypes);
 			buildingResponse.setRentTypes(types);
 			
 			results.add(buildingResponse);

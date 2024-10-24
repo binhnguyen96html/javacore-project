@@ -1,4 +1,4 @@
-package repository.enity;
+package repository.entity;
 
 import annotation.Column;
 

@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import repository.AssignmentBuildingRepository;
-import repository.enity.AssignmentBuildingEntity;
+import repository.entity.AssignmentBuildingEntity;
 import utils.ConnectionUtils;
 
 public class AssignmentBuildingRepositoryImpl extends SimpleJdbcRepository<AssignmentBuildingEntity>

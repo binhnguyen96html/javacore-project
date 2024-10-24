@@ -3,7 +3,7 @@ package repository.impl;
 import java.util.List;
 
 import repository.UserRepository;
-import repository.enity.UserEntity;
+import repository.entity.UserEntity;
 
 public class UserRepositoryImpl extends SimpleJdbcRepository<UserEntity> implements UserRepository {
 

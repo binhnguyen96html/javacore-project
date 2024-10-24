@@ -1,18 +1,19 @@
 package repository.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import constant.SystemConstant;
-import model.request.BuildingSearchRequest;
+import model.request.BuildingSearchRequestRepository;
 import repository.BuildingRepository;
-import repository.enity.BuildingEntity;
+import repository.entity.BuildingEntity;
 import utils.QueryBuilderUtils;
 import utils.StringUtils;
 
 public class BuildingRepositoryImpl extends SimpleJdbcRepository<BuildingEntity> implements BuildingRepository {
 
 	@Override
-	public List<BuildingEntity> findBuilding(BuildingSearchRequest buildingSearchRequest) {
+	public List<BuildingEntity> findBuilding(BuildingSearchRequestRepository bsrr) {
 
 		StringBuilder query = new StringBuilder(
 				"SELECT building.id, building.name, building.street, building.ward, building.districtid, "
@@ -31,68 +32,63 @@ public class BuildingRepositoryImpl extends SimpleJdbcRepository<BuildingEntity>
 						+ SystemConstant.ONE_EQUAL_ONE);
 
 		// NAME
-		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "name", buildingSearchRequest.getName() ));
+		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "name", bsrr.getName() ));
 		// FLOORAREA
-		query.append(QueryBuilderUtils.buildQueryUsingEqualOperator("building", "floorarea", buildingSearchRequest.getFloorArea()));
+		query.append(QueryBuilderUtils.buildQueryUsingEqualOperator("building", "floorarea", bsrr.getFloorArea()));
 		// DISTRICT
-		query.append(QueryBuilderUtils.buildQueryUsingLike("district", "code", buildingSearchRequest.getDistrictCode()));
+		query.append(QueryBuilderUtils.buildQueryUsingLike("district", "code", bsrr.getDistrictCode()));
 		// WARD
-		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "ward", buildingSearchRequest.getWard()));
+		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "ward", bsrr.getWard()));
 		// STREET
-		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "street", buildingSearchRequest.getStreet()));
+		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "street", bsrr.getStreet()));
 		// NUMBER OF BASEMENT
-		query.append(QueryBuilderUtils.buildQueryUsingEqualOperator("building", "numberOfBasement", buildingSearchRequest.getNumberOfBasement()));
+		query.append(QueryBuilderUtils.buildQueryUsingEqualOperator("building", "numberOfBasement", bsrr.getNumberOfBasement()));
 		// DIRECTION
-		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "direction", buildingSearchRequest.getDirection()));
+		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "direction", bsrr.getDirection()));
 		// LEVEL
-		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "level", buildingSearchRequest.getLevel()));
+		query.append(QueryBuilderUtils.buildQueryUsingLike("building", "level", bsrr.getLevel()));
 		// RENTAREA FROM - TO
-		if (buildingSearchRequest.getAreaRentFrom() != null) {
-			query.append(" AND rentarea.value >= " + buildingSearchRequest.getAreaRentFrom());
+		if (bsrr.getAreaRentFrom() != null) {
+			query.append(" AND rentarea.value >= " + bsrr.getAreaRentFrom());
 		}
-		if (buildingSearchRequest.getAreaRentTo() != null) {
-			query.append(" AND rentarea.value <= " + buildingSearchRequest.getAreaRentTo());
+		if (bsrr.getAreaRentTo() != null) {
+			query.append(" AND rentarea.value <= " + bsrr.getAreaRentTo());
 		}
 		// RENTCOST FROM - TO
-		if (buildingSearchRequest.getCostRentFrom() != null) {
-			query.append(" AND building.rentprice >= " + buildingSearchRequest.getCostRentFrom());
+		if (bsrr.getCostRentFrom() != null) {
+			query.append(" AND building.rentprice >= " + bsrr.getCostRentFrom());
 		}
-		if (buildingSearchRequest.getCostRentTo() != null) {
-			query.append(" AND building.rentprice <= " + buildingSearchRequest.getCostRentTo());
+		if (bsrr.getCostRentTo() != null) {
+			query.append(" AND building.rentprice <= " + bsrr.getCostRentTo());
 		}
 		// MANAGER NAME
-		if (!StringUtils.isNullOrEmpty(buildingSearchRequest.getManagerName())) {
+		if (!StringUtils.isNullOrEmpty(bsrr.getManagerName())) {
 			query.append(" AND EXISTS (" + "SELECT 1 " + "FROM user "
 					+ QueryBuilderUtils.buildingQueryWithJoin("user_role", "userid", "user", "id")
 					+ QueryBuilderUtils.buildingQueryWithJoin("role", "id", "user_role", "roleid")
-					+ "WHERE user.fullname LIKE '%" + buildingSearchRequest.getManagerName() + "%' " + "AND role.code = 'manager'" + ")");
+					+ "WHERE user.fullname LIKE '%" + bsrr.getManagerName() + "%' " + "AND role.code = 'manager'" + ")");
 		}
 		// MANAGER PHONE
-		if (!StringUtils.isNullOrEmpty(buildingSearchRequest.getManagerPhoneNumber())) {
+		if (!StringUtils.isNullOrEmpty(bsrr.getManagerPhoneNumber())) {
 			query.append(" AND EXISTS (" + "SELECT 1 " + "FROM user "
 					+ QueryBuilderUtils.buildingQueryWithJoin("user_role", "userid", "user", "id")
 					+ QueryBuilderUtils.buildingQueryWithJoin("role", "id", "user_role", "roleid")
-					+ " WHERE user.phone LIKE '%" + buildingSearchRequest.getManagerPhoneNumber() + "%' " + "AND role.code = 'manager'" + ")");
+					+ " WHERE user.phone LIKE '%" + bsrr.getManagerPhoneNumber() + "%' " + "AND role.code = 'manager'" + ")");
 		}
 		// ASSIGNED STAFF ID
-		if (buildingSearchRequest.getAssignedStaffId() != null) {
+		if (bsrr.getAssignedStaffId() != null) {
 			query.append(" AND building.id IN (" + "SELECT b.id FROM building b "
 					+ QueryBuilderUtils.buildingQueryWithJoin("assignmentbuilding", "buildingid", "building", "id")
 					+ QueryBuilderUtils.buildingQueryWithJoin("user", "id", "assignmentbuilding", "staffid")
-					+ "WHERE user.id = " + buildingSearchRequest.getAssignedStaffId() + ")");
+					+ "WHERE user.id = " + bsrr.getAssignedStaffId() + ")");
 		}
 
 		// BUILDING TYPE
-		if (!StringUtils.isNullOrEmpty(buildingSearchRequest.getRentTypes())) {
+		if (!StringUtils.isNullOrEmpty(bsrr.getRentTypes())) {
 			// convert nguyen-can,tang-tret,noi-that => 'nguyen-can','tang-tret','noi-that'
-			String buildingTypes_String = "";
-			String[] rentTypes = buildingSearchRequest.getRentTypes().split(",");
-			for(int i = 0; i < rentTypes.length; i++) {
-				buildingTypes_String += "'"+rentTypes[i].trim()+"'";
-				if(i != rentTypes.length - 1) {
-					buildingTypes_String += ",";
-				}
-			}
+			String[] rentTypes = bsrr.getRentTypes().split(",");
+			String buildingTypes_String = String.join(",", Arrays.stream(rentTypes).map(type -> "'"+type+"'").toArray(String[]::new));
+			
 			query.append(" AND building.id IN (SELECT building.id from building "
 					+ QueryBuilderUtils.buildingQueryWithJoin("buildingrenttype", "buildingid", "building", "id")
 					+ QueryBuilderUtils.buildingQueryWithJoin("renttype", "id", "buildingrenttype", "renttypeid")

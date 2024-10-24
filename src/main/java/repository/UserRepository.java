@@ -2,7 +2,7 @@ package repository;
 
 import java.util.List;
 
-import repository.enity.UserEntity;
+import repository.entity.UserEntity;
 
 public interface UserRepository extends JdbcRepository<UserEntity> {
 	

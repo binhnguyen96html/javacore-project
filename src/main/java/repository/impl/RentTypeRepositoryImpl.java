@@ -1,16 +1,19 @@
 package repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import constant.SystemConstant;
 import repository.RentTypeRepository;
-import repository.enity.RentTypeEntity;
+import repository.entity.RentTypeEntity;
 import utils.QueryBuilderUtils;
 
 public class RentTypeRepositoryImpl extends SimpleJdbcRepository<RentTypeEntity> implements RentTypeRepository {
 
 	@Override
-	public List<RentTypeEntity> getListOfRentTypes(Long buildingId) {
+	public List<String> getListOfRentTypes(Long buildingId) {
+		
+		List<String> rentTypes = new ArrayList<>();
 		
 		StringBuilder query = new StringBuilder("SELECT renttype.name from renttype "
 				+ QueryBuilderUtils.buildingQueryWithJoin("buildingrenttype", "renttypeid", "renttype", "id")
@@ -21,7 +24,12 @@ public class RentTypeRepositoryImpl extends SimpleJdbcRepository<RentTypeEntity>
 				);
 		//System.out.println("getRentTypeNames, query: "+query);
 		
-		return findByCondition(query.toString());
+		List<RentTypeEntity> rentTypeEntities =  findByCondition(query.toString());
+		for(RentTypeEntity item: rentTypeEntities) {
+			rentTypes.add(item.getName());
+		}
+		
+		return rentTypes;
 	}
 
 }

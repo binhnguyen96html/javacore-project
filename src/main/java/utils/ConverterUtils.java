@@ -3,6 +3,7 @@ package utils;
 import java.util.Map;
 
 import model.request.BuildingSearchRequest;
+import model.request.BuildingSearchRequestRepository;
 
 public class ConverterUtils {
 	
@@ -37,5 +38,29 @@ public class ConverterUtils {
 	}
 	private static Long getParseLong(String value) {
 		return StringUtils.isNullOrEmpty(value) ? null : Long.parseLong(value);
+	}
+	
+	
+	public static BuildingSearchRequestRepository covertBsrToBsrr(BuildingSearchRequest bsr) {
+		BuildingSearchRequestRepository bsrr = new BuildingSearchRequestRepository();
+		
+		bsrr.setName(bsr.getName());
+		bsrr.setFloorArea(bsr.getFloorArea());
+		bsrr.setDistrictCode(bsr.getDistrictCode());
+		bsrr.setWard(bsr.getWard());
+		bsrr.setStreet(bsr.getStreet());
+		bsrr.setNumberOfBasement(bsr.getNumberOfBasement());
+		bsrr.setDirection(bsr.getDirection());
+		bsrr.setLevel(bsr.getLevel());
+		bsrr.setAreaRentFrom(bsr.getAreaRentFrom());
+		bsrr.setAreaRentTo(bsr.getAreaRentTo());
+		bsrr.setCostRentFrom(bsr.getCostRentFrom());
+		bsrr.setCostRentTo(bsr.getCostRentTo());
+		bsrr.setManagerName(bsr.getManagerName());
+		bsrr.setManagerPhoneNumber(bsr.getManagerPhoneNumber());
+		bsrr.setAssignedStaffId(bsr.getAssignedStaffId());
+		bsrr.setRentTypes(bsr.getRentTypes());
+		
+		return bsrr;		
 	}
 }

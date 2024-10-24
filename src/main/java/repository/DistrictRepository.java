@@ -1,6 +1,6 @@
 package repository;
 
-import repository.enity.DistrictEntity;
+import repository.entity.DistrictEntity;
 
 public interface DistrictRepository extends JdbcRepository<DistrictEntity> {
 }

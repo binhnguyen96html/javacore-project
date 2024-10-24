@@ -2,7 +2,7 @@ package repository;
 
 import java.util.List;
 
-import repository.enity.AssignmentBuildingEntity;
+import repository.entity.AssignmentBuildingEntity;
 
 public interface AssignmentBuildingRepository extends JdbcRepository<AssignmentBuildingEntity> {
 	List<AssignmentBuildingEntity> getAssignmentBuildingListById(Long buildingId);
