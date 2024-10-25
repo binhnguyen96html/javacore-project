@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import enums.DistrictsEnum;
 import model.response.BuildingResponse;
 import repository.AssignmentBuildingRepository;
 import repository.BuildingRepository;
@@ -15,6 +15,8 @@ import repository.RentAreaRepository;
 import repository.RentTypeRepository;
 import repository.entity.AssignmentBuildingEntity;
 import repository.entity.BuildingEntity;
+import repository.entity.RentAreaEntity;
+import repository.entity.RentTypeEntity;
 import repository.impl.AssignmentBuildingRepositoryImpl;
 import repository.impl.BuildingRepositoryImpl;
 import repository.impl.DistrictRepositoryImpl;
@@ -28,59 +30,58 @@ public class BuildingServiceImpl implements BuildingService {
 	private DistrictRepository districtRepository = (DistrictRepository) new DistrictRepositoryImpl();
 	private RentTypeRepository rentTypeRepository = new RentTypeRepositoryImpl();
 	private RentAreaRepository rentAreaRepository = new RentAreaRepositoryImpl();
-	
-	private AssignmentBuildingRepository assingmentBuildingRepository = new AssignmentBuildingRepositoryImpl();
 
+	private AssignmentBuildingRepository assingmentBuildingRepository = new AssignmentBuildingRepositoryImpl();
 
 	@Override
 	public List<BuildingResponse> findBuilding(Map<String, Object> buildingSearchParams, List<String> buildingTypes) {
 
 		List<BuildingResponse> results = new ArrayList<>();
-	
+
 		List<BuildingEntity> buildingEntities = buildingRepository.findBuilding(buildingSearchParams, buildingTypes);
-		
-		for(BuildingEntity item: buildingEntities) {
+
+		for (BuildingEntity item : buildingEntities) {
 			BuildingResponse buildingResponse = new BuildingResponse();
 			buildingResponse.setCreatedDate(item.getCreatedDate());
 			buildingResponse.setName(item.getName());
-			buildingResponse.setManagerName(item.getManagername());;
+			buildingResponse.setManagerName(item.getManagername());
 			buildingResponse.setManagerPhoneNumber(item.getManagerphone());
-			
-			//Address
-			String districtCodeOfFoundBuilding = districtRepository.findById((long) item.getDistrictId()).getCode();
-			buildingResponse.setAddress(item.getStreet()+", "+item.getWard()+", "+DistrictsEnum.valueOf(districtCodeOfFoundBuilding));
-			
+
+			// Address
+			String districtNameOfFoundBuilding = districtRepository.findById((long) item.getDistrictId()).getName();
+			buildingResponse.setAddress(item.getStreet() + ", " + item.getWard() + ", " + districtNameOfFoundBuilding);
+
 			buildingResponse.setFloorArea(item.getFloorArea());
 			buildingResponse.setRentPrice(item.getRentPrice());
 			buildingResponse.setServiceFee(item.getServiceFee());
-			
-			//Rent Area
-			List<String> rentAreas = rentAreaRepository.getListRentAreas(item.getId());
-			String areas = String.join(", ", rentAreas);
+
+			// Rent Area
+			List<RentAreaEntity> rentAreaEntities = rentAreaRepository.getListRentAreasById(item.getId());
+			String areas = rentAreaEntities.stream().map(area -> area.getValue().toString())
+					.collect(Collectors.joining(", "));
 			buildingResponse.setRentalArea(areas);
-			
-			//Rent Type
-			List<String> rentTypes = rentTypeRepository.getListOfRentTypes(item.getId());
-			String types = String.join(", ", rentTypes);
+
+			// Rent Type
+			List<RentTypeEntity> rentTypesEntities = rentTypeRepository.getListOfRentTypes(item.getId());
+			String types = rentTypesEntities.stream().map(type -> type.getName()).collect(Collectors.joining(", "));
 			buildingResponse.setRentTypes(types);
-			
+
 			results.add(buildingResponse);
 		}
-		
+
 		return results;
 	}
-
 
 	@Override
 	public void assignBuilding(Long buildingId, Set<Long> staffIds) {
 		List<AssignmentBuildingEntity> ass = assingmentBuildingRepository.getAssignmentBuildingListById(buildingId);
-		
+
 		Set<Long> curStaffIds = new HashSet<>();
 		for (AssignmentBuildingEntity item : ass) {
 			curStaffIds.add(item.getStaffId());
 		}
-		
-		//buildingsToInsert when id when new staffId not in curStaffIds
+
+		// buildingsToInsert when id when new staffId not in curStaffIds
 		List<AssignmentBuildingEntity> staffsToInsert = new ArrayList<>();
 		for (Long item : staffIds) {
 			if (!curStaffIds.contains(item)) {
@@ -92,7 +93,7 @@ public class BuildingServiceImpl implements BuildingService {
 			}
 		}
 
-		//buildingIdsToDelete: find id when current staffId not in new staffIds
+		// buildingIdsToDelete: find id when current staffId not in new staffIds
 		List<Long> staffIdsToDelete = new ArrayList<>();
 		for (Long item : curStaffIds) {
 			if (!staffIds.contains(item)) {
@@ -100,10 +101,8 @@ public class BuildingServiceImpl implements BuildingService {
 			}
 		}
 
-	   assingmentBuildingRepository.assignBuilding(buildingId, staffIdsToDelete, staffsToInsert);
-	   
+		assingmentBuildingRepository.assignBuilding(buildingId, staffIdsToDelete, staffsToInsert);
+
 	}// assignBuilding
-	
-	
 
 }

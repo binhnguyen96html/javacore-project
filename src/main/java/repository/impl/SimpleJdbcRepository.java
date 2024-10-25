@@ -111,55 +111,6 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 		}
 	}// insert
 
-	@Override
-	public void insertMany(List<T> objects, Connection conn) {
-		PreparedStatement stmt = null;
-
-		try {
-			//stmt = null;
-			StringBuilder sql = createSQLInsert();
-			stmt = conn.prepareStatement(sql.toString());
-			
-			for (T object : objects) {
-
-				Class<?> zClass = object.getClass();
-				Field[] fields = zClass.getDeclaredFields();
-				int parameterIndex = 1;
-				for (Field field : fields) {
-					field.setAccessible(true);
-					stmt.setObject(parameterIndex, field.get(object));
-					parameterIndex++;
-				}
-				Class<?> parentClass = zClass.getSuperclass();
-				Field[] fieldParents = parentClass.getDeclaredFields();
-				
-				int indexParent = fields.length + 1;
-				while (parentClass != null) {
-					for (Field field : parentClass.getDeclaredFields()) {
-						field.setAccessible(true);
-						stmt.setObject(indexParent, field.get(object));
-						indexParent++;
-					}
-					parentClass = parentClass.getSuperclass();
-				}	
-				//addBatch(): thêm một nhóm lệnh sql vào batch thực hiện
-				stmt.addBatch();
-			}
-			 stmt.executeBatch();
-		} catch (SQLException | IllegalAccessException e) {
-			System.out.println("insert: " + e);
-			e.printStackTrace();
-		} finally {
-			try {
-				// if(conn!=null) conn.close();
-				if (stmt != null)
-					stmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-	}// insertMany
-
 	private StringBuilder createSQLInsert() {
 		String tableName = "";
 		if (tClass.isAnnotationPresent(Entity.class) && tClass.isAnnotationPresent(Table.class)) {
@@ -202,14 +153,112 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 	}// createSQLInsert
 
 	@Override
+	public void insertMany(List<T> objects, Connection conn) {
+		PreparedStatement pstmt = null;
+
+		try {
+			StringBuilder sql = createSQLInsertMany();
+
+			for (T object : objects) {
+
+				Class<?> zClass = object.getClass();
+				Field[] fields = zClass.getDeclaredFields();
+				int parameterIndex = 1;
+
+				sql.append(objects.indexOf(object) == 0 ? "(" : ",(");
+
+				for (Field field : fields) {
+					field.setAccessible(true);
+					// pstmt.setObject(parameterIndex, field.get(object));
+					// System.out.println("field.get(object): " + field.get(object));
+					sql.append(field.get(object));
+					if (parameterIndex != fields.length)
+						sql.append(",");
+					parameterIndex++;
+				}
+
+				Class<?> parentClass = zClass.getSuperclass();
+				Field[] fieldParents = parentClass.getDeclaredFields();
+				int indexParent = fields.length + 1;
+				while (parentClass != null) {
+					for (Field field : fieldParents) {
+						if (!field.getName().equals("id")) {
+							field.setAccessible(true);
+							//pstmt.setObject(indexParent, field.get(object));
+							if (indexParent != fieldParents.length + indexParent) sql.append(",");
+							sql.append(field.get(object));
+							indexParent++;
+						}
+					}
+					parentClass = parentClass.getSuperclass();
+				}
+				sql.append(")");
+			}
+			pstmt = conn.prepareStatement(sql.toString());
+			//System.out.println("sql1: " + sql);
+			pstmt.execute();
+		} catch (SQLException | IllegalAccessException e) {
+			System.out.println("insert: " + e);
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pstmt != null)
+					pstmt.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+	}// insertMany
+
+	private StringBuilder createSQLInsertMany() {
+		String tableName = "";
+		if (tClass.isAnnotationPresent(Entity.class) && tClass.isAnnotationPresent(Table.class)) {
+			Table table = tClass.getAnnotation(Table.class);
+			tableName = table.name();
+		}
+		StringBuilder fields = new StringBuilder("");
+		StringBuilder values = new StringBuilder("");
+		for (Field field : tClass.getDeclaredFields()) {
+			if (fields.length() > 1) {
+				fields.append(",");
+				values.append(",");
+			}
+			if (field.isAnnotationPresent(Column.class)) {
+				Column column = field.getAnnotation(Column.class);
+				fields.append(column.name());
+				values.append("?");
+			}
+		}
+		Class<?> parentClass = tClass.getSuperclass();
+		while (parentClass != null) {
+			for (Field field : parentClass.getDeclaredFields()) {
+				if (!field.getName().equals("id")) {
+					if (fields.length() > 1) {
+						fields.append(",");
+						values.append(",");
+					}
+					if (field.isAnnotationPresent(Column.class)) {
+						Column column = field.getAnnotation(Column.class);
+						fields.append(column.name());
+						values.append("?");
+					}
+				}
+			}
+			parentClass = parentClass.getSuperclass();
+		} // while
+
+		StringBuilder sql = new StringBuilder("insert into " + tableName + "(" + fields.toString() + ") values");
+		System.out.println("createSQLInsert(), sql: " + sql);
+		return sql;
+	}// createSQLInsertMany
+
+	@Override
 	public void delete(Long id, String field, Long id2, String field2, Connection conn) {
 
-		// Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
 		try {
-			// conn = ConnectionUtils.getConnection();
 			stmt = conn.createStatement();
 			String tableName = null;
 			if (tClass.isAnnotationPresent(Entity.class) && tClass.isAnnotationPresent(Table.class)) {
@@ -224,7 +273,6 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 		} finally {
 			try {
 				if (conn != null)
-					// conn.close();
 					if (stmt != null)
 						stmt.close();
 				if (rs != null)
@@ -258,8 +306,8 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 			}
 			sql.append(")");
 
-			//System.out.println("delete, sql: " + sql);
-			
+			// System.out.println("delete, sql: " + sql);
+
 			pstmt = conn.prepareStatement(sql.toString());
 			pstmt.executeUpdate();
 

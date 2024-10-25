@@ -73,7 +73,8 @@ public class BuildingView {
 		}
 
 		System.out.println("assign building for staffs--------------------");
-		List<Long> staffIdsList = Arrays.asList(2L,4L,3L);
+		// 1L, 2L, 3L, 4L
+		List<Long> staffIdsList = Arrays.asList(1L, 2L, 3L, 4L);
 		Set<Long> staffIds = new HashSet<>(staffIdsList);
 		buildingController.assignBuilding(4L, staffIds);
 	}

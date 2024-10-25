@@ -1,6 +1,5 @@
 package repository.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import constant.SystemConstant;
@@ -11,9 +10,7 @@ import utils.QueryBuilderUtils;
 public class RentAreaRepositoryImpl extends SimpleJdbcRepository<RentAreaEntity> implements RentAreaRepository {
 
 	@Override
-	public List<String> getListRentAreas(Long buildingId) {
-		
-		List<String> rentAreas = new ArrayList<>();
+	public List<RentAreaEntity> getListRentAreasById(Long buildingId) {
 		
 		StringBuilder query = new StringBuilder("SELECT rentarea.value from rentarea "
 				+ QueryBuilderUtils.buildingQueryWithJoin("building", "id", "rentarea", "buildingid")
@@ -21,14 +18,11 @@ public class RentAreaRepositoryImpl extends SimpleJdbcRepository<RentAreaEntity>
 				+ " AND building.id="
 				+ buildingId
 				);
-		//System.out.println("getRentTypeNames, query: "+query);
+		//System.out.println("getListRentAreas, query: "+query);
 		
-		List<RentAreaEntity> rentAreasEntity = findByCondition(query.toString());
-		for(RentAreaEntity item: rentAreasEntity) {
-			rentAreas.add(item.getValue().toString());
-		}
-		
-		return rentAreas;
+		List<RentAreaEntity> rentAreasEntities = findByCondition(query.toString());
+	
+		return rentAreasEntities;
 	}
 
 }
