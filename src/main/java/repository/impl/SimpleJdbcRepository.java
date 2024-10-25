@@ -248,7 +248,7 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 		} // while
 
 		StringBuilder sql = new StringBuilder("insert into " + tableName + "(" + fields.toString() + ") values");
-		System.out.println("createSQLInsert(), sql: " + sql);
+		//System.out.println("createSQLInsert(), sql: " + sql);
 		return sql;
 	}// createSQLInsertMany
 
