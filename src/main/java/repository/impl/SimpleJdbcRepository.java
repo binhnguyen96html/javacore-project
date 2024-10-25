@@ -128,7 +128,6 @@ public class SimpleJdbcRepository<T> implements JdbcRepository<T> {
 				for (Field field : fields) {
 					field.setAccessible(true);
 					stmt.setObject(parameterIndex, field.get(object));
-					System.out.println("field.get(object): "+ field.get(object));
 					parameterIndex++;
 				}
 				Class<?> parentClass = zClass.getSuperclass();

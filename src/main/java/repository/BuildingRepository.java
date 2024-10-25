@@ -1,10 +1,10 @@
 package repository;
 
 import java.util.List;
+import java.util.Map;
 
-import model.request.BuildingSearchRequestRepository;
 import repository.entity.BuildingEntity;
 
 public interface BuildingRepository extends JdbcRepository<BuildingEntity> {
-	List<BuildingEntity> findBuilding(BuildingSearchRequestRepository buildingSearchRequestRepository);
+	List<BuildingEntity> findBuilding(Map<String, Object> buildingSearchParams, List<String> buildingTypes);
 }

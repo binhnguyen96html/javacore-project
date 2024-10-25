@@ -3,37 +3,29 @@ package service.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import enums.DistrictsEnum;
-import model.request.BuildingSearchRequest;
-import model.request.BuildingSearchRequestRepository;
 import model.response.BuildingResponse;
 import repository.AssignmentBuildingRepository;
 import repository.BuildingRepository;
 import repository.DistrictRepository;
 import repository.RentAreaRepository;
 import repository.RentTypeRepository;
-import repository.UserRepository;
 import repository.entity.AssignmentBuildingEntity;
 import repository.entity.BuildingEntity;
-import repository.entity.RentAreaEntity;
-import repository.entity.RentTypeEntity;
-import repository.entity.UserEntity;
 import repository.impl.AssignmentBuildingRepositoryImpl;
 import repository.impl.BuildingRepositoryImpl;
 import repository.impl.DistrictRepositoryImpl;
 import repository.impl.RentAreaRepositoryImpl;
 import repository.impl.RentTypeRepositoryImpl;
-import repository.impl.UserRepositoryImpl;
 import service.BuildingService;
-import utils.ConverterUtils;
 
 public class BuildingServiceImpl implements BuildingService {
 
 	private BuildingRepository buildingRepository = new BuildingRepositoryImpl();
 	private DistrictRepository districtRepository = (DistrictRepository) new DistrictRepositoryImpl();
-	private UserRepository userRepository = new UserRepositoryImpl();
 	private RentTypeRepository rentTypeRepository = new RentTypeRepositoryImpl();
 	private RentAreaRepository rentAreaRepository = new RentAreaRepositoryImpl();
 	
@@ -41,26 +33,22 @@ public class BuildingServiceImpl implements BuildingService {
 
 
 	@Override
-	public List<BuildingResponse> findBuilding(BuildingSearchRequest buildingSearchRequest) {
+	public List<BuildingResponse> findBuilding(Map<String, Object> buildingSearchParams, List<String> buildingTypes) {
 
 		List<BuildingResponse> results = new ArrayList<>();
-		
-		BuildingSearchRequestRepository bsrr = ConverterUtils.covertBsrToBsrr(buildingSearchRequest);
-		List<BuildingEntity> buildingEntities = buildingRepository.findBuilding(bsrr);
+	
+		List<BuildingEntity> buildingEntities = buildingRepository.findBuilding(buildingSearchParams, buildingTypes);
 		
 		for(BuildingEntity item: buildingEntities) {
 			BuildingResponse buildingResponse = new BuildingResponse();
 			buildingResponse.setCreatedDate(item.getCreatedDate());
 			buildingResponse.setName(item.getName());
+			buildingResponse.setManagerName(item.getManagername());;
+			buildingResponse.setManagerPhoneNumber(item.getManagerphone());
 			
 			//Address
 			String districtCodeOfFoundBuilding = districtRepository.findById((long) item.getDistrictId()).getCode();
 			buildingResponse.setAddress(item.getStreet()+", "+item.getWard()+", "+DistrictsEnum.valueOf(districtCodeOfFoundBuilding));
-		
-			//Manager Info
-			UserEntity managerInfo = userRepository.getInfoByRole("manager").get(0);
-			buildingResponse.setManagerName(managerInfo.getFullname());;
-			buildingResponse.setManagerPhoneNumber(managerInfo.getPhone());
 			
 			buildingResponse.setFloorArea(item.getFloorArea());
 			buildingResponse.setRentPrice(item.getRentPrice());

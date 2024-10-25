@@ -1,5 +1,6 @@
 package view;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,37 +9,54 @@ import java.util.Map;
 import java.util.Set;
 
 import controller.BuildingController;
-import model.request.BuildingSearchRequest;
 import model.response.BuildingResponse;
-import utils.ConverterUtils;
+import utils.StringUtils;
 
 public class BuildingView {
 	public static void main(String[] args) {
 		BuildingController buildingController = new BuildingController();
 
-		// Input
+		// Input from client
 		Map<String, String> params = new HashMap<>();
-		params.put("name", null);
-		params.put("floorarea", null);
-		params.put("districtcode",null);
-		params.put("ward",null);
-		params.put("street",null);
-		params.put("numberofbasement",null);
-		params.put("direction",null);
-		params.put("level",null);
-		params.put("arearentfrom",null);
-		params.put("arearentto",null);
-		params.put("costrentfrom",null);
-		params.put("costrentto",null);
-		params.put("managername",null);
-		params.put("managerphonenumber",null);
-		params.put("assignedstaffid",null);
-		params.put("buildingtypes",null);
+		params.put("name", "");
+		params.put("floorarea", "");
+		params.put("districtcode","");
+		params.put("ward","");
+		params.put("street","");
+		params.put("numberofbasement","");
+		params.put("direction","");
+		params.put("level","");
+		params.put("arearentfrom","");
+		params.put("arearentto","");
+		params.put("costrentfrom","");
+		params.put("costrentto","");
+		params.put("managername","");
+		params.put("managerphone","");
+		params.put("assignedstaffid","");
 		
-		BuildingSearchRequest bsr = ConverterUtils.convertParamsToBuildingSearchRequest(params);
+		List<String> buildingTypes = new ArrayList<>(Arrays.asList("noi-that","nguyen-can"));
+		
+		// convert Input from client to right input passed in controller, service, repo
+		Map<String, Object> buildingSearchParams = new HashMap<>();
+		 buildingSearchParams.put("name", params.get("name"));
+		   buildingSearchParams.put( "floorarea", getParseInteger(params.get("floorarea")));
+		   buildingSearchParams.put( "districtcode", params.get("districtcode"));
+		   buildingSearchParams.put( "ward", params.get("ward"));
+		   buildingSearchParams.put( "street", params.get("street"));
+		   buildingSearchParams.put( "numberofbasement", getParseInteger(params.get("numberofbasement")));
+		   buildingSearchParams.put( "direction", params.get("direction"));
+		   buildingSearchParams.put( "level", params.get("level"));
+		   buildingSearchParams.put( "arearentfrom", getParseInteger(params.get("arearentfrom")));
+		   buildingSearchParams.put( "arearentto", getParseInteger(params.get("arearentto")));
+		   buildingSearchParams.put( "costrentfrom", getParseInteger(params.get("costrentfrom")));
+		   buildingSearchParams.put( "costrentto", getParseInteger(params.get("costrentto")));
+		   buildingSearchParams.put( "managername", params.get("managername"));
+		   buildingSearchParams.put( "managerphone", params.get("managerphone"));
+		   buildingSearchParams.put( "assignedstaffid", getParseLong(params.get("assignedstaffid")));
+		
 		
 		System.out.println("find building --------------------");
-		List<BuildingResponse> results = buildingController.findBuilding(bsr);
+		List<BuildingResponse> results = buildingController.findBuilding(buildingSearchParams, buildingTypes);
 
 		for (BuildingResponse item : results) {
 			System.out.println("Building: --------------------------");
@@ -58,5 +76,13 @@ public class BuildingView {
 		List<Long> staffIdsList = Arrays.asList(2L,4L,3L);
 		Set<Long> staffIds = new HashSet<>(staffIdsList);
 		buildingController.assignBuilding(4L, staffIds);
+	}
+
+	private static Integer getParseInteger(String value) {
+		return StringUtils.isNullOrEmpty(value) ? null : Integer.parseInt(value);
+	}
+
+	private static Long getParseLong(String value) {
+		return StringUtils.isNullOrEmpty(value) ? null : Long.parseLong(value);
 	}
 }

@@ -86,6 +86,12 @@ public class BuildingEntity extends BaseEntity {
 	@Column(name="image")
 	private String image;
 	
+	@Column(name="managername")
+	private String managername;
+	
+	@Column(name="managerphone")
+	private String managerphone;
+	
 	@Column(name="createddate")
 	private Date createdDate;
 	
@@ -296,6 +302,22 @@ public class BuildingEntity extends BaseEntity {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public String getManagername() {
+		return managername;
+	}
+
+	public void setManagername(String managername) {
+		this.managername = managername;
+	}
+
+	public String getManagerphone() {
+		return managerphone;
+	}
+
+	public void setManagerphone(String managerphone) {
+		this.managerphone = managerphone;
 	}
 
 	public Date getCreatedDate() {
