@@ -15,6 +15,7 @@ import repository.RentAreaRepository;
 import repository.RentTypeRepository;
 import repository.entity.AssignmentBuildingEntity;
 import repository.entity.BuildingEntity;
+import repository.entity.DistrictEntity;
 import repository.entity.RentAreaEntity;
 import repository.entity.RentTypeEntity;
 import repository.impl.AssignmentBuildingRepositoryImpl;
@@ -48,7 +49,8 @@ public class BuildingServiceImpl implements BuildingService {
 			buildingResponse.setManagerPhoneNumber(item.getManagerphone());
 
 			// Address
-			String districtNameOfFoundBuilding = districtRepository.findById((long) item.getDistrictId()).getName();
+			DistrictEntity districtEntity = districtRepository.findById((long) item.getDistrictId());
+			String districtNameOfFoundBuilding = districtEntity == null ? "district name is not found" : districtEntity.getName();
 			buildingResponse.setAddress(item.getStreet() + ", " + item.getWard() + ", " + districtNameOfFoundBuilding);
 
 			buildingResponse.setFloorArea(item.getFloorArea());
@@ -56,14 +58,17 @@ public class BuildingServiceImpl implements BuildingService {
 			buildingResponse.setServiceFee(item.getServiceFee());
 
 			// Rent Area
-			List<RentAreaEntity> rentAreaEntities = rentAreaRepository.getListRentAreasById(item.getId());
-			String areas = rentAreaEntities.stream().map(area -> area.getValue().toString())
-					.collect(Collectors.joining(", "));
+			List<RentAreaEntity> rentAreas = rentAreaRepository.getListRentAreasById(item.getId());
+			String areas = (rentAreas != null && !rentAreas.isEmpty()) ? 
+					rentAreas.stream().map(area -> area.getValue().toString()).collect(Collectors.joining(", "))
+					: "rent areas are not found";
 			buildingResponse.setRentalArea(areas);
 
 			// Rent Type
 			List<RentTypeEntity> rentTypesEntities = rentTypeRepository.getListOfRentTypes(item.getId());
-			String types = rentTypesEntities.stream().map(type -> type.getName()).collect(Collectors.joining(", "));
+			String types = (rentTypesEntities != null && !rentTypesEntities.isEmpty()) 
+					? rentTypesEntities.stream().map(type -> type.getName()).collect(Collectors.joining(", "))
+					: "building types are not found";
 			buildingResponse.setRentTypes(types);
 
 			results.add(buildingResponse);
