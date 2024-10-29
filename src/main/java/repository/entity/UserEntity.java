@@ -15,7 +15,7 @@ public class UserEntity extends BaseEntity {
 	private String password;
 	
 	@Column(name="fullname")
-	private String fullname;
+	private String fullName;
 	
 	@Column(name="phone")
 	private String phone;
@@ -42,12 +42,12 @@ public class UserEntity extends BaseEntity {
 		this.password = password;
 	}
 
-	public String getFullname() {
-		return fullname;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	public String getPhone() {

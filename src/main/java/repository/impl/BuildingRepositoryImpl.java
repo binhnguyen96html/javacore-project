@@ -38,8 +38,8 @@ public class BuildingRepositoryImpl extends SimpleJdbcRepository<BuildingEntity>
 		query.append(QueryBuilderUtils.buildQueryUsingEqualOperator("building", "floorarea",
 				buildingSearchParams.get("floorarea")));
 		// DISTRICT
-		query.append(QueryBuilderUtils.buildQueryUsingLike("district", "code",
-				buildingSearchParams.get("districtcode").toString()));
+		query.append(QueryBuilderUtils.buildQueryUsingLike("district", "name",
+				buildingSearchParams.get("district").toString()));
 		// WARD
 		query.append(
 				QueryBuilderUtils.buildQueryUsingLike("building", "ward", buildingSearchParams.get("ward").toString()));
@@ -97,7 +97,7 @@ public class BuildingRepositoryImpl extends SimpleJdbcRepository<BuildingEntity>
 		}
 
 		query.append(" GROUP BY building.id");
-		System.out.println("query: " + query);
+		//System.out.println("query: " + query);
 
 		return findByCondition(query.toString());
 	}

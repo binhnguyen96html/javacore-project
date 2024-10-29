@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import model.response.BuildingResponse;
+import model.response.UserWithAssignmentStatus;
 import service.BuildingService;
 import service.impl.BuildingServiceImpl;
 
@@ -23,6 +24,10 @@ public class BuildingController {
 	
 	public void assignBuilding(Long buildingId, Set<Long> staffIds) {
 		buildingService.assignBuilding(buildingId, staffIds);
+	}
+	
+	public List<UserWithAssignmentStatus> getAllStaffWithAssingmentStatus(Long buildingId){
+		return buildingService.getAllStaffWithAssingmentStatus(buildingId);
 	}
 	
 }

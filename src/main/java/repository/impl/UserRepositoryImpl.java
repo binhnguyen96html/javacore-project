@@ -19,4 +19,27 @@ public class UserRepositoryImpl extends SimpleJdbcRepository<UserEntity> impleme
 		return findByCondition(sql.toString());
 	}
 
+	@Override
+	public List<UserEntity> getAllWorkingStaff() {
+		StringBuilder sql = new StringBuilder("");
+		sql.append("SELECT * FROM USER WHERE status=1");
+		
+		return findByCondition(sql.toString());
+	}
+
+	@Override
+	public List<UserEntity> getAllStaffAssignmentByBuildingId(Long buildingId) {
+		StringBuilder sql = new StringBuilder("");
+		sql.append("SELECT user.id, user.fullname FROM user "
+				+ "INNER JOIN assignmentbuilding ON assignmentbuilding.staffid = user.id "
+				+ "INNER JOIN building ON building.id = assignmentbuilding.buildingid "
+				+ "WHERE user.status=1 AND building.id="
+				+ buildingId
+				);
+		
+		//System.out.println("getAllStaffAssignmentByBuildingId: " + sql);
+		
+		return findByCondition(sql.toString());
+	}
+
 }
